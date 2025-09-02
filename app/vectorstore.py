@@ -7,14 +7,13 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 def get_embeddings():
     """
-    Lazily load HuggingFaceEmbeddings on CPU using safe initialization.
+    Lazily load HuggingFaceEmbeddings on CPU in a way compatible with LangChain.
     """
-    # Create embeddings only when needed
+    # Remove extra unsupported args
     return HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL,
         model_kwargs={"device": "cpu"},
         encode_kwargs={"device": "cpu"},
-        model_load_kwargs={"device_map": None}  # avoids meta tensor issues
     )
 
 def store_chunks(chunks):
