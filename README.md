@@ -28,7 +28,7 @@ DocsAI is a Streamlit web application that allows you to upload PDF documents an
 ---
 
 ## 📁 Project Structure
-
+```
 chat_pdf/
 ├── app/
 │   ├── chain.py           # Builds the LLM chain for answering questions
@@ -42,7 +42,7 @@ chat_pdf/
 ├── index.py               # Main Streamlit app
 ├── requirements.txt       # Python dependencies
 ├── README.md              # Project README
-
+```
 
 ## 🛠 Setup Instructions
 
