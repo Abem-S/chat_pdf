@@ -1,22 +1,16 @@
-from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
 
 def store_chunks(chunks):
     """
-    Stores the given chunks in an in-memory ChromaDB with HuggingFace embeddings.
+    Stores the given chunks in an in-memory FAISS vectorstore with HuggingFace embeddings.
     Returns the vectorstore instance.
     """
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-    # In-memory vectorstore (no persistence)
-    vectorstore = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory=None  # No persistence
-    )
+    # Create FAISS vectorstore from chunks
+    vectorstore = FAISS.from_documents(chunks, embeddings)
 
     return vectorstore
 
@@ -33,13 +27,10 @@ def get_bm25_retriever(chunks):
 
 def get_vectorstore(chunks=None):
     """
-    Returns a Chroma vectorstore.
-    For in-memory usage, you need to provide the chunks again if needed.
+    Loads a FAISS vectorstore from chunks if provided.
+    Returns None if no chunks are given.
     """
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
     if chunks:
-        return Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=None)
-    
-    # Empty in-memory vectorstore if no chunks provided
-    return Chroma(persist_directory=None, embedding_function=embeddings)
+        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        return FAISS.from_documents(chunks, embeddings)
+    return None
