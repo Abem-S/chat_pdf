@@ -11,3 +11,4 @@ langchain-text-splitters
 rank_bm25
 langchain-huggingface
 # langchain-pinecone
+pysqlite3-binary>=3.35.0
