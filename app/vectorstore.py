@@ -2,18 +2,26 @@ from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
 
+def get_embeddings():
+    """
+    Returns a HuggingFaceEmbeddings instance forced to run on CPU.
+    """
+    return HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": "cpu"}  # force CPU
+    )
+
 def store_chunks(chunks):
     """
     Stores the given chunks in an in-memory FAISS vectorstore with HuggingFace embeddings.
     Returns the vectorstore instance.
     """
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embeddings = get_embeddings()
 
     # Create FAISS vectorstore from chunks
     vectorstore = FAISS.from_documents(chunks, embeddings)
 
     return vectorstore
-
 
 def get_bm25_retriever(chunks):
     """
@@ -24,13 +32,12 @@ def get_bm25_retriever(chunks):
     bm25.k = 4
     return bm25
 
-
 def get_vectorstore(chunks=None):
     """
     Loads a FAISS vectorstore from chunks if provided.
     Returns None if no chunks are given.
     """
     if chunks:
-        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+        embeddings = get_embeddings()
         return FAISS.from_documents(chunks, embeddings)
     return None
