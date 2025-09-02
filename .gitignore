@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment
+.env
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
