@@ -1,35 +1,32 @@
 # app/vectorstore.py
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
 
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 def get_embeddings():
     """
-    Lazily load HuggingFaceEmbeddings on CPU to avoid meta tensor errors.
+    Lazily load HuggingFaceEmbeddings on CPU using safe initialization.
     """
+    # Create embeddings only when needed
     return HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL,
-        model_kwargs={"device": "cpu"},  # force CPU for PyTorch
-        encode_kwargs={"device": "cpu"}  # also force CPU during batch encoding
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"device": "cpu"},
+        model_load_kwargs={"device_map": None}  # avoids meta tensor issues
     )
 
 def store_chunks(chunks):
     """
-    Stores chunks in an in-memory FAISS vectorstore with CPU-safe embeddings.
+    Build FAISS vectorstore from chunks with CPU-safe embeddings.
     """
     if not chunks:
         return None
-
     embeddings = get_embeddings()
-    vectorstore = FAISS.from_documents(chunks, embeddings)
-    return vectorstore
+    return FAISS.from_documents(chunks, embeddings)
 
 def get_bm25_retriever(chunks):
-    """
-    Returns BM25Retriever for keyword-based search.
-    """
     if not chunks:
         return None
     bm25 = BM25Retriever.from_documents(chunks)
@@ -37,9 +34,6 @@ def get_bm25_retriever(chunks):
     return bm25
 
 def get_vectorstore(chunks=None):
-    """
-    Returns a FAISS vectorstore if chunks are provided.
-    """
     if not chunks:
         return None
     embeddings = get_embeddings()
