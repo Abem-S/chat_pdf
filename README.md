@@ -1,18 +1,43 @@
-# GROQ RAG ChatBot – Chat with Your PDFs
+# 📄 DocsAI: Chat with Your PDF
 
-This project implements a **Retrieval-Augmented Generation (RAG)** chatbot that lets you **upload a PDF** and **interact with their content** using **GROQ LLM** and an **in-memory Chroma vector store**.
+[**Live Demo**](https://2pdfchat.streamlit.app/)
+
+DocsAI is a Streamlit web application that allows you to upload PDF documents and interact with them using natural language queries. It leverages **FAISS** for vector storage, **HuggingFace embeddings** for semantic understanding, and optionally **BM25** for hybrid search.
 
 ---
 
 ## 🚀 Features
 
-- 📄 Upload and process **a PDF file**
-- 🧠 Store document embeddings in **Chroma** (in-memory)
-- 💬 Query with **GROQ LLM** using **RAG**
-- 🔍 Inspect vector store chunks from the sidebar
-- 🛠️ Modular, well-commented code for easy customization
+- Upload PDF files and automatically split them into searchable chunks.
+- Store embeddings in a FAISS vectorstore for fast semantic search.
+- Ask questions about your PDFs and get relevant answers.
+- Optional hybrid search using BM25 for keyword matching.
+- View retrieved chunks for transparency in the sidebar.
 
 ---
+
+## 🛠 Tech Stack
+
+- **Frontend:** Streamlit
+- **Vector Store:** FAISS
+- **Embeddings:** HuggingFace `sentence-transformers/all-MiniLM-L6-v2`
+- **PDF Parsing:** PyPDF2
+- **Retrieval:** LangChain
+- **Reranking (optional):** BM25Retriever
+
+---
+
+## 📁 Project Structure
+
+chat_pdf/
+├── app/
+│ ├── chain.py # Builds the LLM chain for answering questions
+│ ├── loaders.py # Loads PDFs and splits into chunks
+│ ├── reranker.py # Optional BM25 reranker
+│ └── vectorstore.py # Handles FAISS vectorstore
+├── uploaded_files/ # Stores user-uploaded PDFs
+├── index.py # Main Streamlit app
+├── requirements.txt # Python dependencies
 
 ## 🛠 Setup Instructions
 
@@ -81,20 +106,33 @@ GROQ_API_KEY=your_api_key_here
 
 ---
 
-## ▶️ Run the App
+📝 Usage
 
-After installing dependencies, start the Streamlit app:
-
+1. Run the Streamlit app:
 ```bash
 streamlit run index.py
 ```
+2. Upload a PDF using the sidebar.
+3. Wait for the PDF to be processed and indexed.
+4. Enter your question in the text input box.
+5. View the answer and relevant chunks in the sidebar.
 
-The app will open in your default web browser at:
+🔧 Configuration
 
-```
-http://localhost:8501
-```
+Embedding model: sentence-transformers/all-MiniLM-L6-v2 (configured in vectorstore.py)
 
-If it doesn’t open automatically, copy and paste the URL from your terminal into your browser.
+FAISS index persistence: uploaded_files/faiss_index (or in-memory for temporary use)
 
-> 💡 Build your own custom RAG chatbot effortlessly!
+Optional hybrid search via BM25 is configurable in reranker.py.
+
+📌 Notes
+
+Chroma is no longer required; FAISS is used for vector storage.
+
+Ensure uploaded PDFs are not password-protected.
+
+Large PDFs may take longer to index.
+
+🌐 Live Demo
+
+Try the app live here: https://2pdfchat.streamlit.app/
