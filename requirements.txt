@@ -1,13 +1,22 @@
+# Core app
 streamlit
-langchain_groq 
-langchain_community 
-pypdf 
-sentence_transformers
-python-dotenv
-chromadb
-langchain-chroma
-# transformers
+
+# LangChain components
+langchain
+langchain_groq
 langchain-text-splitters
-rank_bm25
 langchain-huggingface
-# langchain-pinecone
+langchain_community
+
+# PDF handling
+pypdf
+
+# Embeddings
+sentence_transformers
+
+# Utilities
+python-dotenv
+rank_bm25
+
+# FAISS for in-memory vectorstore
+faiss-cpu
