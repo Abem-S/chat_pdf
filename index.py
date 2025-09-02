@@ -2,8 +2,9 @@ import os
 import streamlit as st
 from app.loaders import load_and_chunk_pdf
 from app.vectorstore import store_chunks, get_bm25_retriever
-from app.chain import build_llm_chain, retrieve_hybrid_docs, rerank_documents
+from app.chain import build_llm_chain, retrieve_hybrid_docs
 from app.pdf_handler import upload_pdfs
+from app.reranker import rerank  # <- use the new CPU-safe reranker
 
 # Streamlit page config
 st.set_page_config(page_title="📄 Chat with PDF", layout="wide")
@@ -36,7 +37,7 @@ if pdf_file and submitted:
         new_chunks = load_and_chunk_pdf(file_path)
         st.session_state["chunks"].extend(new_chunks)
 
-        # Build in-memory vectorstore with all chunks
+        # Build in-memory FAISS vectorstore
         st.session_state["vectorstore"] = store_chunks(st.session_state["chunks"])
         st.session_state["bm25"] = get_bm25_retriever(st.session_state["chunks"])
         st.success("✅ PDF indexed successfully!")
@@ -50,8 +51,8 @@ if query:
         # STEP 4: Retrieve documents (Hybrid search)
         retrieved_docs = retrieve_hybrid_docs(query, st.session_state["vectorstore"])
 
-        # STEP 5: Apply reranker
-        reranked_docs = rerank_documents(query, retrieved_docs)
+        # STEP 5: Apply CPU-safe reranker
+        reranked_docs = rerank(query, retrieved_docs)
 
         # STEP 6: Build the chain
         chain = build_llm_chain()
