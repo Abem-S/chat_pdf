@@ -31,13 +31,18 @@ DocsAI is a Streamlit web application that allows you to upload PDF documents an
 
 chat_pdf/
 ├── app/
-│ ├── chain.py # Builds the LLM chain for answering questions
-│ ├── loaders.py # Loads PDFs and splits into chunks
-│ ├── reranker.py # Optional BM25 reranker
-│ └── vectorstore.py # Handles FAISS vectorstore
-├── uploaded_files/ # Stores user-uploaded PDFs
-├── index.py # Main Streamlit app
-├── requirements.txt # Python dependencies
+│   ├── chain.py           # Builds the LLM chain for answering questions
+│   ├── config.py          # Configuration settings, e.g., API keys
+│   ├── loaders.py         # Loads PDFs and splits into chunks
+│   ├── pdf_handler.py     # Handles PDF uploads
+│   ├── reranker.py        # Optional BM25 reranker
+│   └── vectorstore.py     # Handles FAISS vectorstore
+├── uploaded_files/        # Stores user-uploaded PDFs
+├── chroma_store/          # (Optional) If you were using Chroma earlier; can be removed with FAISS
+├── index.py               # Main Streamlit app
+├── requirements.txt       # Python dependencies
+├── README.md              # Project README
+
 
 ## 🛠 Setup Instructions
 
@@ -100,11 +105,7 @@ You can also create a `.env` file in the project root directory:
 
 ```
 GROQ_API_KEY=your_api_key_here
-```
 
-> ⚠️ **Important**: Never commit your API key to version control. Add `.env` to your `.gitignore` file if using this method.
-
----
 
 📝 Usage
 
