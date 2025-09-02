@@ -1,22 +1,27 @@
 # app/reranker.py
 from sentence_transformers import CrossEncoder
 
-# Load once globally for CPU
 RERANKER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-reranker = CrossEncoder(RERANKER_MODEL_NAME, device="cpu")  # Force CPU
+
+def get_reranker():
+    """
+    Lazily loads the CrossEncoder model on CPU.
+    Returns a CrossEncoder instance.
+    """
+    return CrossEncoder(RERANKER_MODEL_NAME, device="cpu")
 
 def rerank(query, docs, top_k=3):
     """
-    Re-rank the list of documents based on semantic relevance to the query.
-    Returns top_k reranked documents.
+    Re-rank documents based on semantic similarity to the query.
+    Returns top_k documents.
     """
     if not docs:
         return []
 
+    reranker = get_reranker()  # <- load model here, not at import time
     pairs = [[query, doc.page_content] for doc in docs]
     scores = reranker.predict(pairs)
 
-    # Sort documents by score descending and take top_k
     reranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
     top_docs = [doc for doc, score in reranked[:top_k]]
     return top_docs
