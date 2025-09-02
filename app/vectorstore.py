@@ -1,14 +1,17 @@
+# app/vectorstore.py
+
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
 
 def get_embeddings():
     """
-    Returns a HuggingFaceEmbeddings instance forced to run on CPU.
+    Returns a HuggingFaceEmbeddings instance forced to CPU and safe for Streamlit Cloud.
     """
     return HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
-        model_kwargs={"device": "cpu"}  # force CPU
+        model_kwargs={"device": "cpu"},  # force CPU for PyTorch
+        encode_kwargs={"device": "cpu"}  # also force CPU for batch encoding
     )
 
 def store_chunks(chunks):
@@ -17,10 +20,7 @@ def store_chunks(chunks):
     Returns the vectorstore instance.
     """
     embeddings = get_embeddings()
-
-    # Create FAISS vectorstore from chunks
     vectorstore = FAISS.from_documents(chunks, embeddings)
-
     return vectorstore
 
 def get_bm25_retriever(chunks):
